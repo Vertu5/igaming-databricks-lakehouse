@@ -12,17 +12,19 @@ Full write-up: [English](report/report_en.md) · [Français](report/rapport_fr.m
 | Who are the VIPs, and which valuable players are leaving? | `gold_player_value` |
 | Which sessions deserve a human review? | `gold_risk_sessions` |
 | One row per player, for ad-hoc analysis | `gold_player_stats` |
+| What is each player's ML churn probability, KMeans persona, and GGR at risk? | `gold_player_ml_scores` |
 
 ## Pipeline
 
 ```
 CSV (Unity Catalog volume)
-   -> bronze  (faithful copy)         -> quality gate
-   -> silver  (player + session + spin joined) -> quality gate
-   -> gold    (business tables)       -> quality gate
+   -> bronze  (faithful copy)                  -> quality gate (test_bronze.sql)
+   -> silver  (player + session + spin joined) -> quality gate (test_silver.sql)
+   -> gold    (business tables)                -> quality gate (test_gold.sql)
+   -> mlflow  (04_mlflow_production.py: MLflow tracking + UC @champion registry + batch scoring) -> quality gate (test_ml.sql)
 ```
 
-The three layers and their gates are one Databricks **job** defined in [`resources/igaming_pipeline.yml`](resources/igaming_pipeline.yml) with Declarative Automation Bundles. A gate is a SQL file using `assert_true`: a violated rule fails the task and the next layer never runs. Gates check key uniqueness, no lost spins between layers, and that revenue and turnover reconcile between Silver and Gold.
+The four layers (Bronze, Silver, Gold, and MLflow production scoring) and their gates are one 8-task Databricks **job** defined in [`resources/igaming_pipeline.yml`](resources/igaming_pipeline.yml) with Declarative Automation Bundles. A gate is a SQL file using `assert_true`: a violated rule fails the task and the next layer never runs. Gates check key uniqueness, no lost spins between layers, revenue/turnover reconciliation between Silver and Gold, and valid `[0, 1]` ML probabilities in `gold_player_ml_scores`.
 
 ## CI/CD without a CI server
 

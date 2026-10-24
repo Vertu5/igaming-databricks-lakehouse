@@ -59,3 +59,22 @@ resources:
             file:
               path: ../src/sql/quality/test_gold.sql
             parameters: *params
+
+        - task_key: mlflow_train_and_score
+          depends_on:
+            - task_key: test_gold
+          notebook_task:
+            notebook_path: ../src/notebooks/04_mlflow_production.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: test_ml
+          depends_on:
+            - task_key: mlflow_train_and_score
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/sql/quality/test_ml.sql
+            parameters: *params
+

@@ -20,8 +20,11 @@ ROOT = Path(__file__).resolve().parent.parent
 JOB_FILE = ROOT / "resources" / "igaming_pipeline.yml"
 
 
-def job_sql_paths():
-    return [(JOB_FILE.parent / p).resolve() for p in re.findall(r"path:\s*(\S+\.sql)", JOB_FILE.read_text())]
+def job_task_paths():
+    text = JOB_FILE.read_text()
+    sqls = re.findall(r"path:\s*(\S+\.sql)", text)
+    nbs = re.findall(r"notebook_path:\s*(\S+\.py)", text)
+    return [(JOB_FILE.parent / p).resolve() for p in (sqls + nbs)]
 
 
 class TestGuardrails(unittest.TestCase):
@@ -73,7 +76,7 @@ class TestSql(unittest.TestCase):
 
     def test_all_sql_files_parse(self):
         files = list((ROOT / "src" / "sql").rglob("*.sql"))
-        self.assertGreaterEqual(len(files), 6)
+        self.assertGreaterEqual(len(files), 7)
         for f in files:
             with self.subTest(f.name):
                 body = "\n".join(l.split("--")[0] for l in self.neutralise(f.read_text()).splitlines())
@@ -88,8 +91,8 @@ class TestSql(unittest.TestCase):
 
 class TestJobWiring(unittest.TestCase):
     def test_job_files_exist(self):
-        paths = job_sql_paths()
-        self.assertEqual(len(paths), 6)
+        paths = job_task_paths()
+        self.assertEqual(len(paths), 8)
         for p in paths:
             with self.subTest(p.name):
                 self.assertTrue(p.exists(), f"{p} referenced by the job does not exist")
@@ -101,9 +104,10 @@ class TestJobWiring(unittest.TestCase):
         if out.returncode != 0:
             self.skipTest("cannot reach Databricks: " + out.stderr.strip()[:120])
         synced = out.stdout
-        for p in job_sql_paths():
+        for p in job_task_paths():
             with self.subTest(p.name):
                 self.assertIn(str(p.relative_to(ROOT)), synced, f"{p.name} would NOT be uploaded to the workspace")
+
 
 
 if __name__ == "__main__":

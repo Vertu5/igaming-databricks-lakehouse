@@ -91,6 +91,23 @@ SCHEMA = {
         "turnover_pct": "percentile rank of turnover (0-1)",
         "segment": "RFM segment",
     },
+    "gold_player_ml_scores": {
+        "player_id": "player identifier",
+        "country": "declared country code",
+        "acquisition_channel": "acquisition channel",
+        "rfm_segment": "RFM rule-based segment",
+        "cluster_id": "KMeans behavioral cluster ID (0-3)",
+        "cluster_persona": "KMeans persona: Casual Low-Stakes, Regular Multi-Game, High-Frequency Grinders, or VIP High-Rollers",
+        "recency_days": "days since last play",
+        "churn_probability": "30-day churn probability predicted by the @champion MLflow model (0.0 to 1.0)",
+        "churn_risk_tier": "Low Risk, Medium Risk, or High Risk",
+        "turnover": "total amount bet",
+        "ggr": "gross gaming revenue",
+        "expected_ggr_at_risk": "GREATEST(ggr, 0) * churn_probability (revenue at risk of churn)",
+        "risky_sessions": "number of High or Medium risk sessions",
+        "model_registry_uri": "Unity Catalog registered model URI and version (@champion)",
+        "scored_at": "timestamp of batch inference run",
+    },
 }
 ALLOWED_TABLES = set(SCHEMA)
 ALLOWED_COLUMNS = {c for cols in SCHEMA.values() for c in cols}

@@ -1,0 +1,106 @@
+{
+  "prod_run_id": 884183058684485,
+  "job_id": 852631522710273,
+  "experiment": "/Users/obavertu@gmail.com/igaming_mlflow_igaming",
+  "registered_model": "workspace.igaming.igaming_churn_model",
+  "alias": "champion",
+  "target_table": "workspace.igaming.gold_player_ml_scores",
+  "risk_tiers": [
+    {
+      "churn_risk_tier": "High Risk",
+      "players": 8,
+      "avg_churn_prob": 0.6559,
+      "total_ggr": -1739.32,
+      "total_ggr_at_risk": 147.79,
+      "model_uri": "workspace.igaming.igaming_churn_model@champion (v1)"
+    },
+    {
+      "churn_risk_tier": "Medium Risk",
+      "players": 2230,
+      "avg_churn_prob": 0.5337,
+      "total_ggr": 32817.53,
+      "total_ggr_at_risk": 80614.39,
+      "model_uri": "workspace.igaming.igaming_churn_model@champion (v1)"
+    },
+    {
+      "churn_risk_tier": "Low Risk",
+      "players": 4619,
+      "avg_churn_prob": 0.1843,
+      "total_ggr": 543220.74,
+      "total_ggr_at_risk": 140726.11,
+      "model_uri": "workspace.igaming.igaming_churn_model@champion (v1)"
+    }
+  ],
+  "experiment_id": "1740894470169590",
+  "mlflow_runs": [
+    {
+      "run_id": "be7751cf81204db3a1856eb95e7e7f09",
+      "run_name": "kmeans_player_segmentation_k4",
+      "status": "FINISHED",
+      "metrics": {
+        "silhouette_score": 0.2707
+      },
+      "params": {
+        "features": "sessions,active_days,turnover,avg_bet,max_bet,feature_buys,recency_days",
+        "n_clusters": "4"
+      }
+    },
+    {
+      "run_id": "20cc7c3685cd47fba2dd817ac50b92bd",
+      "run_name": "isolation_forest_session_anomalies",
+      "status": "FINISHED",
+      "metrics": {
+        "ml_anomalies": 467,
+        "rule_high_medium": 399,
+        "rule_ml_overlap": 67,
+        "total_sessions": 46690
+      },
+      "params": {
+        "n_estimators": "200",
+        "contamination": "0.01"
+      }
+    },
+    {
+      "run_id": "1b45240f50ce49a2a7d1d9dc58f8526a",
+      "run_name": "churn_gradient_boosting_challenger",
+      "status": "FINISHED",
+      "metrics": {
+        "cv_roc_auc_mean": 0.7455,
+        "test_brier_score": 0.1878,
+        "test_f1_score": 0.4928,
+        "test_pr_auc": 0.5331,
+        "test_roc_auc": 0.7395
+      },
+      "params": {
+        "train_rows": "4510",
+        "window_days": "30",
+        "test_rows": "1933",
+        "schema": "igaming",
+        "n_features": "8",
+        "model_family": "gradient_boosting_challenger",
+        "catalog": "workspace"
+      }
+    },
+    {
+      "run_id": "16f098dbd9214b979ca64f6c9da17b51",
+      "run_name": "churn_logistic_regression_baseline",
+      "status": "FINISHED",
+      "metrics": {
+        "cv_roc_auc_mean": 0.7453,
+        "test_brier_score": 0.1875,
+        "test_f1_score": 0.4728,
+        "test_pr_auc": 0.5441,
+        "test_roc_auc": 0.7437
+      },
+      "params": {
+        "window_days": "30",
+        "train_rows": "4510",
+        "test_rows": "1933",
+        "schema": "igaming",
+        "n_features": "8",
+        "model_family": "logistic_regression_baseline",
+        "catalog": "workspace"
+      }
+    }
+  ]
+}
