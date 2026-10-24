@@ -1,0 +1,8 @@
+{
+  "sessions": 46690,
+  "ml_anomalies": 467,
+  "rule_based_high_medium": 399,
+  "overlap": 67,
+  "ml_only": 400,
+  "rules_only": 332
+}

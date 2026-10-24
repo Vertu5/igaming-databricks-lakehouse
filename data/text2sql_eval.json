@@ -1,0 +1,99 @@
+{
+  "guardrail_passed": 14,
+  "guardrail_total": 14,
+  "provider": "offline-demo",
+  "accuracy_passed": 15,
+  "accuracy_total": 15,
+  "details": [
+    {
+      "question": "Who are the 10 players with the highest turnover?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT player_id, turnover FROM workspace.igaming.gold_player_stats ORDER BY turnover DESC LIMIT 10"
+    },
+    {
+      "question": "Which acquisition channel generates the most revenue?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT acquisition_channel, ggr FROM workspace.igaming.gold_channel_performance ORDER BY ggr DESC LIMIT 1"
+    },
+    {
+      "question": "How many players are there in each segment?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT segment, COUNT(*) AS players FROM workspace.igaming.gold_player_stats GROUP BY segment LIMIT 100"
+    },
+    {
+      "question": "What is the total gross gaming revenue?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT ROUND(SUM(ggr), 2) AS total_ggr FROM workspace.igaming.gold_player_stats LIMIT 100"
+    },
+    {
+      "question": "How many sessions have a high risk level?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_risk_sessions WHERE risk_level = 'High' LIMIT 100"
+    },
+    {
+      "question": "What is the average turnover of VIP players?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT ROUND(AVG(turnover), 2) AS avg_turnover FROM workspace.igaming.gold_player_stats WHERE segment = 'VIP' LIMIT 100"
+    },
+    {
+      "question": "How many players use each device type?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT device_pref, COUNT(*) AS players FROM workspace.igaming.gold_player_stats GROUP BY device_pref LIMIT 100"
+    },
+    {
+      "question": "Which channel has the best activation rate?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT acquisition_channel, activation_rate FROM workspace.igaming.gold_channel_performance ORDER BY activation_rate DESC LIMIT 1"
+    },
+    {
+      "question": "How many high value players are at risk of leaving?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE segment = 'At risk (high value)' LIMIT 100"
+    },
+    {
+      "question": "What share of sessions have a geo mismatch?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT ROUND(AVG(geo_mismatch), 4) AS rate FROM workspace.igaming.gold_risk_sessions LIMIT 100"
+    },
+    {
+      "question": "Which channel earns the least per registered player?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT acquisition_channel, ggr_per_registered_player FROM workspace.igaming.gold_channel_performance ORDER BY ggr_per_registered_player ASC LIMIT 1"
+    },
+    {
+      "question": "How many players bought a feature more than 50 times?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE feature_buys > 50 LIMIT 100"
+    },
+    {
+      "question": "How many registered players never played?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE segment = 'No activity' LIMIT 100"
+    },
+    {
+      "question": "What is the average number of sessions of a Champion?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT ROUND(AVG(sessions), 2) AS avg_sessions FROM workspace.igaming.gold_player_stats WHERE segment = 'Champion' LIMIT 100"
+    },
+    {
+      "question": "What is the total turnover by operating system?",
+      "status": "ok",
+      "match": true,
+      "sql": "SELECT os, ROUND(SUM(turnover), 2) AS turnover FROM workspace.igaming.gold_player_stats GROUP BY os LIMIT 100"
+    }
+  ]
+}

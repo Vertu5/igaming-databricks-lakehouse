@@ -1,0 +1,538 @@
+{
+  "kpis": {
+    "sql": "SELECT\n  (SELECT COUNT(*) FROM workspace.igaming.gold_player_stats) AS registered_players,\n  (SELECT COUNT(*) FROM workspace.igaming.gold_player_value) AS active_players,\n  (SELECT COUNT(*) FROM workspace.igaming.bronze_spins) AS spins,\n  (SELECT COUNT(*) FROM workspace.igaming.bronze_sessions) AS sessions,\n  (SELECT ROUND(SUM(bet_amount), 0) FROM workspace.igaming.bronze_spins) AS turnover,\n  (SELECT ROUND(SUM(bet_amount - win_amount), 0) FROM workspace.igaming.bronze_spins) AS ggr,\n  (SELECT ROUND(SUM(win_amount) / SUM(bet_amount), 4) FROM workspace.igaming.bronze_spins) AS rtp",
+    "rows": [
+      {
+        "registered_players": 8000,
+        "active_players": 6857,
+        "spins": 4646999,
+        "sessions": 46690,
+        "turnover": 8110087.0,
+        "ggr": 574299.0,
+        "rtp": 0.9292
+      }
+    ]
+  },
+  "channels": {
+    "sql": "SELECT acquisition_channel, registered_players, active_players, activation_rate,\n       ggr, ggr_per_registered_player, hold_rate\nFROM workspace.igaming.gold_channel_performance\nORDER BY ggr_per_registered_player DESC",
+    "rows": [
+      {
+        "acquisition_channel": "organic",
+        "registered_players": 2297,
+        "active_players": 1968,
+        "activation_rate": 0.8568,
+        "ggr": 208031.31,
+        "ggr_per_registered_player": 90.57,
+        "hold_rate": 0.0876
+      },
+      {
+        "acquisition_channel": "paid_social",
+        "registered_players": 1261,
+        "active_players": 1090,
+        "activation_rate": 0.8644,
+        "ggr": 92318.25,
+        "ggr_per_registered_player": 73.21,
+        "hold_rate": 0.0766
+      },
+      {
+        "acquisition_channel": "affiliate",
+        "registered_players": 2525,
+        "active_players": 2155,
+        "activation_rate": 0.8535,
+        "ggr": 170940.51,
+        "ggr_per_registered_player": 67.7,
+        "hold_rate": 0.0644
+      },
+      {
+        "acquisition_channel": "paid_search",
+        "registered_players": 1438,
+        "active_players": 1238,
+        "activation_rate": 0.8609,
+        "ggr": 83026.12,
+        "ggr_per_registered_player": 57.74,
+        "hold_rate": 0.0609
+      },
+      {
+        "acquisition_channel": "referral",
+        "registered_players": 479,
+        "active_players": 406,
+        "activation_rate": 0.8476,
+        "ggr": 19982.76,
+        "ggr_per_registered_player": 41.72,
+        "hold_rate": 0.0389
+      }
+    ]
+  },
+  "segments": {
+    "sql": "SELECT segment, COUNT(*) AS players,\n       ROUND(SUM(turnover), 0) AS turnover,\n       ROUND(SUM(ggr), 0) AS ggr,\n       ROUND(SUM(ggr) / SUM(SUM(ggr)) OVER (), 4) AS share_of_ggr\nFROM workspace.igaming.gold_player_value\nGROUP BY segment\nORDER BY ggr DESC",
+    "rows": [
+      {
+        "segment": "VIP",
+        "players": 69,
+        "turnover": 2139689.0,
+        "ggr": 234352.0,
+        "share_of_ggr": 0.4081
+      },
+      {
+        "segment": "Champion",
+        "players": 1743,
+        "turnover": 3157011.0,
+        "ggr": 165681.0,
+        "share_of_ggr": 0.2885
+      },
+      {
+        "segment": "Loyal",
+        "players": 938,
+        "turnover": 1145063.0,
+        "ggr": 88250.0,
+        "share_of_ggr": 0.1537
+      },
+      {
+        "segment": "Casual",
+        "players": 1724,
+        "turnover": 857628.0,
+        "ggr": 45619.0,
+        "share_of_ggr": 0.0794
+      },
+      {
+        "segment": "At risk (high value)",
+        "players": 413,
+        "turnover": 553769.0,
+        "ggr": 22885.0,
+        "share_of_ggr": 0.0398
+      },
+      {
+        "segment": "Dormant",
+        "players": 1970,
+        "turnover": 256927.0,
+        "ggr": 17512.0,
+        "share_of_ggr": 0.0305
+      }
+    ]
+  },
+  "pareto": {
+    "sql": "SELECT ROUND(decile / 10.0, 1) AS top_share_of_players,\n       ROUND(SUM(SUM(turnover)) OVER (ORDER BY decile) / SUM(SUM(turnover)) OVER (), 4) AS cumulative_share_of_turnover\nFROM (\n  SELECT turnover, NTILE(10) OVER (ORDER BY turnover DESC) AS decile\n  FROM workspace.igaming.gold_player_value\n)\nGROUP BY decile\nORDER BY decile",
+    "rows": [
+      {
+        "top_share_of_players": 0.1,
+        "cumulative_share_of_turnover": 0.6417
+      },
+      {
+        "top_share_of_players": 0.2,
+        "cumulative_share_of_turnover": 0.787
+      },
+      {
+        "top_share_of_players": 0.3,
+        "cumulative_share_of_turnover": 0.8678
+      },
+      {
+        "top_share_of_players": 0.4,
+        "cumulative_share_of_turnover": 0.9174
+      },
+      {
+        "top_share_of_players": 0.5,
+        "cumulative_share_of_turnover": 0.9494
+      },
+      {
+        "top_share_of_players": 0.6,
+        "cumulative_share_of_turnover": 0.9707
+      },
+      {
+        "top_share_of_players": 0.7,
+        "cumulative_share_of_turnover": 0.9849
+      },
+      {
+        "top_share_of_players": 0.8,
+        "cumulative_share_of_turnover": 0.9936
+      },
+      {
+        "top_share_of_players": 0.9,
+        "cumulative_share_of_turnover": 0.9983
+      },
+      {
+        "top_share_of_players": 1.0,
+        "cumulative_share_of_turnover": 1.0
+      }
+    ]
+  },
+  "net_winners": {
+    "sql": "SELECT COUNT(*) AS active_players,\n       SUM(CASE WHEN ggr < 0 THEN 1 ELSE 0 END) AS net_winners,\n       ROUND(AVG(CASE WHEN ggr < 0 THEN 1.0 ELSE 0.0 END), 4) AS net_winner_share\nFROM workspace.igaming.gold_player_value",
+    "rows": [
+      {
+        "active_players": 6857,
+        "net_winners": 2243,
+        "net_winner_share": 0.3271
+      }
+    ]
+  },
+  "top_vip": {
+    "sql": "SELECT player_id, acquisition_channel, country, turnover, ggr, sessions\nFROM workspace.igaming.gold_player_stats\nWHERE segment = 'VIP'\nORDER BY turnover DESC\nLIMIT 10",
+    "rows": [
+      {
+        "player_id": 5534,
+        "acquisition_channel": "affiliate",
+        "country": "RS",
+        "turnover": 393081.8,
+        "ggr": 45867.18,
+        "sessions": 97
+      },
+      {
+        "player_id": 5506,
+        "acquisition_channel": "organic",
+        "country": "DE",
+        "turnover": 99441.38,
+        "ggr": 11330.34,
+        "sessions": 35
+      },
+      {
+        "player_id": 6404,
+        "acquisition_channel": "paid_social",
+        "country": "GB",
+        "turnover": 62249.65,
+        "ggr": 17856.44,
+        "sessions": 17
+      },
+      {
+        "player_id": 54,
+        "acquisition_channel": "organic",
+        "country": "NL",
+        "turnover": 57066.67,
+        "ggr": 10131.53,
+        "sessions": 2
+      },
+      {
+        "player_id": 1802,
+        "acquisition_channel": "paid_search",
+        "country": "RS",
+        "turnover": 55690.9,
+        "ggr": 965.08,
+        "sessions": 13
+      },
+      {
+        "player_id": 4694,
+        "acquisition_channel": "referral",
+        "country": "FR",
+        "turnover": 54398.45,
+        "ggr": -6976.76,
+        "sessions": 38
+      },
+      {
+        "player_id": 5698,
+        "acquisition_channel": "referral",
+        "country": "NO",
+        "turnover": 45744.45,
+        "ggr": -9505.87,
+        "sessions": 13
+      },
+      {
+        "player_id": 6715,
+        "acquisition_channel": "organic",
+        "country": "IT",
+        "turnover": 40612.45,
+        "ggr": -992.27,
+        "sessions": 120
+      },
+      {
+        "player_id": 488,
+        "acquisition_channel": "organic",
+        "country": "RS",
+        "turnover": 40589.37,
+        "ggr": 8738.28,
+        "sessions": 35
+      },
+      {
+        "player_id": 1865,
+        "acquisition_channel": "affiliate",
+        "country": "NO",
+        "turnover": 40510.03,
+        "ggr": 9312.94,
+        "sessions": 19
+      }
+    ]
+  },
+  "risk_levels": {
+    "sql": "SELECT risk_level, COUNT(*) AS sessions, COUNT(DISTINCT player_id) AS players\nFROM workspace.igaming.gold_risk_sessions\nGROUP BY risk_level\nORDER BY CASE risk_level WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END",
+    "rows": [
+      {
+        "risk_level": "High",
+        "sessions": 10,
+        "players": 10
+      },
+      {
+        "risk_level": "Medium",
+        "sessions": 389,
+        "players": 213
+      },
+      {
+        "risk_level": "Low",
+        "sessions": 6072,
+        "players": 2166
+      },
+      {
+        "risk_level": "None",
+        "sessions": 40219,
+        "players": 6395
+      }
+    ]
+  },
+  "risk_flags": {
+    "sql": "SELECT 'Geo mismatch' AS flag, SUM(geo_mismatch) AS sessions FROM workspace.igaming.gold_risk_sessions\nUNION ALL SELECT 'Long session', SUM(flag_long_session) FROM workspace.igaming.gold_risk_sessions\nUNION ALL SELECT 'High pace', SUM(flag_high_pace) FROM workspace.igaming.gold_risk_sessions\nUNION ALL SELECT 'High bet', SUM(flag_high_bet) FROM workspace.igaming.gold_risk_sessions\nUNION ALL SELECT 'Shared device', SUM(flag_shared_device) FROM workspace.igaming.gold_risk_sessions\nUNION ALL SELECT 'Shared IP', SUM(flag_shared_ip) FROM workspace.igaming.gold_risk_sessions",
+    "rows": [
+      {
+        "flag": "Geo mismatch",
+        "sessions": 1676
+      },
+      {
+        "flag": "Long session",
+        "sessions": 470
+      },
+      {
+        "flag": "High pace",
+        "sessions": 467
+      },
+      {
+        "flag": "High bet",
+        "sessions": 468
+      },
+      {
+        "flag": "Shared device",
+        "sessions": 3380
+      },
+      {
+        "flag": "Shared IP",
+        "sessions": 419
+      }
+    ]
+  },
+  "monthly": {
+    "sql": "SELECT DATE_TRUNC('month', ts) AS month,\n       ROUND(SUM(bet_amount), 0) AS turnover,\n       ROUND(SUM(bet_amount - win_amount), 0) AS ggr,\n       COUNT(DISTINCT player_id) AS active_players\nFROM workspace.igaming.bronze_spins\nGROUP BY DATE_TRUNC('month', ts)\nORDER BY month",
+    "rows": [
+      {
+        "month": "2025-10-01",
+        "turnover": 1177140.0,
+        "ggr": 40150.0,
+        "active_players": 3251
+      },
+      {
+        "month": "2025-11-01",
+        "turnover": 2263748.0,
+        "ggr": 218078.0,
+        "active_players": 4823
+      },
+      {
+        "month": "2025-12-01",
+        "turnover": 2386455.0,
+        "ggr": 179866.0,
+        "active_players": 4755
+      },
+      {
+        "month": "2026-01-01",
+        "turnover": 2282744.0,
+        "ggr": 136205.0,
+        "active_players": 4621
+      }
+    ]
+  },
+  "volatility": {
+    "sql": "SELECT slot_volatility, COUNT(*) AS spins,\n       ROUND(SUM(bet_amount), 0) AS turnover,\n       ROUND(SUM(bet_amount - win_amount), 0) AS ggr,\n       ROUND(SUM(win_amount) / SUM(bet_amount), 4) AS rtp\nFROM workspace.igaming.bronze_spins\nGROUP BY slot_volatility\nORDER BY turnover DESC",
+    "rows": [
+      {
+        "slot_volatility": "med",
+        "spins": 2457230,
+        "turnover": 4210024.0,
+        "ggr": 241702.0,
+        "rtp": 0.9426
+      },
+      {
+        "slot_volatility": "low",
+        "spins": 1891792,
+        "turnover": 3414220.0,
+        "ggr": 301727.0,
+        "rtp": 0.9116
+      },
+      {
+        "slot_volatility": "high",
+        "spins": 297977,
+        "turnover": 485844.0,
+        "ggr": 30870.0,
+        "rtp": 0.9365
+      }
+    ]
+  },
+  "clusters": [
+    {
+      "cluster": 0,
+      "players": 2345,
+      "avg_turnover": 103.7,
+      "avg_ggr": 4.79,
+      "avg_sessions": 2.03,
+      "avg_bet": 0.8,
+      "feature_buys": 0.52,
+      "recency_days": 44.31,
+      "total_ggr": 11226.05,
+      "share_of_players": 0.342,
+      "share_of_ggr": 0.0195
+    },
+    {
+      "cluster": 1,
+      "players": 780,
+      "avg_turnover": 4371.54,
+      "avg_ggr": 308.54,
+      "avg_sessions": 25.88,
+      "avg_bet": 1.61,
+      "feature_buys": 16.1,
+      "recency_days": 5.68,
+      "total_ggr": 240662.61,
+      "share_of_players": 0.1138,
+      "share_of_ggr": 0.4191
+    },
+    {
+      "cluster": 2,
+      "players": 1247,
+      "avg_turnover": 2725.64,
+      "avg_ggr": 210.78,
+      "avg_sessions": 5.09,
+      "avg_bet": 6.18,
+      "feature_buys": 4.18,
+      "recency_days": 24.27,
+      "total_ggr": 262844.77,
+      "share_of_players": 0.1819,
+      "share_of_ggr": 0.4577
+    },
+    {
+      "cluster": 3,
+      "players": 2485,
+      "avg_turnover": 425.85,
+      "avg_ggr": 23.97,
+      "avg_sessions": 6.2,
+      "avg_bet": 0.81,
+      "feature_buys": 3.48,
+      "recency_days": 14.94,
+      "total_ggr": 59565.52,
+      "share_of_players": 0.3624,
+      "share_of_ggr": 0.1037
+    }
+  ],
+  "anomalies": {
+    "sessions": 46690,
+    "ml_anomalies": 467,
+    "rule_based_high_medium": 399,
+    "overlap": 67,
+    "ml_only": 400,
+    "rules_only": 332
+  },
+  "churn": {
+    "players": 6443,
+    "churn_rate": 0.3357,
+    "auc_test": 0.7468,
+    "standardized_coefficients": {
+      "spins": -0.267,
+      "sessions": -0.608,
+      "active_days": -0.88,
+      "turnover": 0.298,
+      "avg_bet": -0.172,
+      "feature_buys": 0.04,
+      "tenure_days": -0.021,
+      "days_idle_before_cutoff": 0.02
+    }
+  },
+  "text2sql_eval": {
+    "guardrail_passed": 14,
+    "guardrail_total": 14,
+    "provider": "offline-demo",
+    "accuracy_passed": 15,
+    "accuracy_total": 15,
+    "details": [
+      {
+        "question": "Who are the 10 players with the highest turnover?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT player_id, turnover FROM workspace.igaming.gold_player_stats ORDER BY turnover DESC LIMIT 10"
+      },
+      {
+        "question": "Which acquisition channel generates the most revenue?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT acquisition_channel, ggr FROM workspace.igaming.gold_channel_performance ORDER BY ggr DESC LIMIT 1"
+      },
+      {
+        "question": "How many players are there in each segment?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT segment, COUNT(*) AS players FROM workspace.igaming.gold_player_stats GROUP BY segment LIMIT 100"
+      },
+      {
+        "question": "What is the total gross gaming revenue?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT ROUND(SUM(ggr), 2) AS total_ggr FROM workspace.igaming.gold_player_stats LIMIT 100"
+      },
+      {
+        "question": "How many sessions have a high risk level?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_risk_sessions WHERE risk_level = 'High' LIMIT 100"
+      },
+      {
+        "question": "What is the average turnover of VIP players?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT ROUND(AVG(turnover), 2) AS avg_turnover FROM workspace.igaming.gold_player_stats WHERE segment = 'VIP' LIMIT 100"
+      },
+      {
+        "question": "How many players use each device type?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT device_pref, COUNT(*) AS players FROM workspace.igaming.gold_player_stats GROUP BY device_pref LIMIT 100"
+      },
+      {
+        "question": "Which channel has the best activation rate?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT acquisition_channel, activation_rate FROM workspace.igaming.gold_channel_performance ORDER BY activation_rate DESC LIMIT 1"
+      },
+      {
+        "question": "How many high value players are at risk of leaving?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE segment = 'At risk (high value)' LIMIT 100"
+      },
+      {
+        "question": "What share of sessions have a geo mismatch?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT ROUND(AVG(geo_mismatch), 4) AS rate FROM workspace.igaming.gold_risk_sessions LIMIT 100"
+      },
+      {
+        "question": "Which channel earns the least per registered player?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT acquisition_channel, ggr_per_registered_player FROM workspace.igaming.gold_channel_performance ORDER BY ggr_per_registered_player ASC LIMIT 1"
+      },
+      {
+        "question": "How many players bought a feature more than 50 times?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE feature_buys > 50 LIMIT 100"
+      },
+      {
+        "question": "How many registered players never played?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT COUNT(*) AS n FROM workspace.igaming.gold_player_stats WHERE segment = 'No activity' LIMIT 100"
+      },
+      {
+        "question": "What is the average number of sessions of a Champion?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT ROUND(AVG(sessions), 2) AS avg_sessions FROM workspace.igaming.gold_player_stats WHERE segment = 'Champion' LIMIT 100"
+      },
+      {
+        "question": "What is the total turnover by operating system?",
+        "status": "ok",
+        "match": true,
+        "sql": "SELECT os, ROUND(SUM(turnover), 2) AS turnover FROM workspace.igaming.gold_player_stats GROUP BY os LIMIT 100"
+      }
+    ]
+  }
+}

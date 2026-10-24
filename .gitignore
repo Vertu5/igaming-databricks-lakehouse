@@ -1,0 +1,16 @@
+# Raw data lives in a Unity Catalog volume, never in git (spins.csv is 328 MB).
+*.csv
+*.zip
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Databricks bundle local state
+.databricks/
+
+# Secrets, just in case
+.env
+*.pem
+.databrickscfg

@@ -1,0 +1,56 @@
+bundle:
+  name: igaming-pipeline
+
+include:
+  - resources/*.yml
+
+# Only the SQL sources are deployed. Data stays in the Unity Catalog volume, never in the bundle.
+sync:
+  exclude:
+    - "*.csv"
+    - "/.venv/**"
+    - "/data/**"
+    - "/analysis/**"
+    - "/report/**"
+    - "/tests/**"
+    - "/*.py"
+    - "/*.md"
+    - "/.githooks/**"
+    - "__pycache__/**"
+    - "Makefile"
+    - ".gitignore"
+
+variables:
+  warehouse_id:
+    description: SQL warehouse that runs every task of the pipeline
+    default: c7512e31ce256bc1
+  catalog:
+    description: Unity Catalog catalog
+    default: workspace
+  schema:
+    description: Target schema, one per environment
+    default: igaming_dev
+  sample_mod:
+    description: Keep players where player_id % sample_mod = 0. 1 means full data.
+    default: "20"
+
+targets:
+  # Fast feedback loop: 5 percent of the players, own schema, runs in seconds.
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-4c6dff8d-a93c.cloud.databricks.com
+    variables:
+      schema: igaming_dev
+      sample_mod: "20"
+
+  # Full data, production schema.
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-4c6dff8d-a93c.cloud.databricks.com
+      root_path: /Workspace/Users/obavertu@gmail.com/.bundle/${bundle.name}/prod
+    variables:
+      schema: igaming
+      sample_mod: "1"

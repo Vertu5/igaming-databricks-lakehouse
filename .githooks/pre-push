@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Blocks `git push` when the local CI gate fails. Bypass in an emergency with: git push --no-verify
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+echo "pre-push: running make check..."
+make check

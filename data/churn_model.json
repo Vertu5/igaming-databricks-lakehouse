@@ -1,0 +1,15 @@
+{
+  "players": 6443,
+  "churn_rate": 0.3357,
+  "auc_test": 0.7468,
+  "standardized_coefficients": {
+    "spins": -0.267,
+    "sessions": -0.608,
+    "active_days": -0.88,
+    "turnover": 0.298,
+    "avg_bet": -0.172,
+    "feature_buys": 0.04,
+    "tenure_days": -0.021,
+    "days_idle_before_cutoff": 0.02
+  }
+}
