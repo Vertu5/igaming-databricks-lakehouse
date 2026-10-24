@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # 04 — End-to-End MLOps on Databricks: MLflow Tracking, Unity Catalog Registry & Batch Scoring
+# MAGIC # 04 - End-to-End MLOps on Databricks: MLflow Tracking, Unity Catalog Registry & Batch Scoring
 # MAGIC
 # MAGIC This notebook industrializes the Data Science layer directly inside the **Databricks Lakehouse**:
 # MAGIC 1. **Leakage-Free Feature Windowing**: Builds historical features on `[min_date, max_date - 30d]` from `bronze_spins` and labels 30-day churn on `(max_date - 30d, max_date]`.
