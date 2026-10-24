@@ -1,0 +1,752 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\frenchsetup{StandardLists=true}
+\addto\captionsfrench{\def\CaptionSeparator{ : }}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{eurosym}
+\usepackage[margin=2.1cm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,backgrounds}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xurl}
+\usepackage{bookmark}
+\usepackage{hyperref}
+
+% Palette de couleurs exécutive
+\definecolor{navy}{HTML}{0F172A}
+\definecolor{slate}{HTML}{334155}
+\definecolor{muted}{HTML}{64748B}
+\definecolor{primary}{HTML}{2563EB}
+\definecolor{emerald}{HTML}{059669}
+\definecolor{amber}{HTML}{D97706}
+\definecolor{rose}{HTML}{E11D48}
+\definecolor{purple}{HTML}{7C3AED}
+\definecolor{lightbg}{HTML}{F8FAFC}
+\definecolor{bordercol}{HTML}{CBD5E1}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=primary,
+    citecolor=primary,
+    pdftitle={Intelligence Decisionnelle iGaming : Lakehouse Databricks, MLflow et Text-to-SQL Gouverne},
+    pdfauthor={NDINGA OBA Olivier Vertu}
+}
+
+% En-têtes et pieds de page
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{muted}{\textbf{Intelligence Décisionnelle iGaming} | Databricks Unity Catalog \& MLflow}}
+\fancyhead[R]{\small\textcolor{muted}{NDINGA OBA Olivier Vertu}}
+\fancyfoot[C]{\small\textcolor{muted}{Page \thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{bordercol}\leaders\hrule height \headrulewidth\hfill}}
+
+% Format des titres
+\titleformat{\section}
+  {\Large\bfseries\sffamily\color{navy}}
+  {\thesection.}{0.6em}{}[\vspace{2pt}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\sffamily\color{slate}}
+  {\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\sffamily\color{primary}}
+  {\thesubsubsection}{0.5em}{}
+
+% Configuration des boîtes de synthèse
+\newtcolorbox{execbox}[1]{
+  enhanced,
+  colback=lightbg,
+  colframe=primary,
+  boxrule=0.8pt,
+  leftrule=4pt,
+  arc=3pt,
+  fonttitle=\bfseries\sffamily\color{navy},
+  coltitle=navy,
+  colbacktitle=lightbg,
+  attach title to upper={\par\vspace{4pt}},
+  title={#1}
+}
+
+\newtcolorbox{successbox}[1]{
+  enhanced,
+  colback=lightbg,
+  colframe=emerald,
+  boxrule=0.8pt,
+  leftrule=4pt,
+  arc=3pt,
+  fonttitle=\bfseries\sffamily\color{emerald},
+  coltitle=emerald,
+  colbacktitle=lightbg,
+  attach title to upper={\par\vspace{4pt}},
+  title={#1}
+}
+
+% Configuration du code SQL / Python
+\lstdefinestyle{sqlstyle}{
+  language=SQL,
+  basicstyle=\ttfamily\footnotesize\color{navy},
+  keywordstyle=\bfseries\color{primary},
+  commentstyle=\itshape\color{muted},
+  stringstyle=\color{emerald},
+  backgroundcolor=\color{lightbg},
+  frame=single,
+  rulecolor=\color{bordercol},
+  framesep=6pt,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  literate={é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {à}{{\`a}}1 {ù}{{\`u}}1 {ç}{{\c{c}}}1
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\emergencystretch=1.5em
+
+\begin{document}
+
+% ==============================================================================
+% PAGE DE TITRE EXECUTIVE
+% ==============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{0.8cm}
+    {\scshape\Large\color{primary}\textbf{Rapport d'Architecture, Data Science \& Décision Stratégique}\par}
+    \vspace{0.6cm}
+    {\Huge\bfseries\sffamily\color{navy} Intelligence Décisionnelle iGaming\par}
+    \vspace{0.35cm}
+    {\large\sffamily\color{slate} Du Log Brut au Comité Exécutif : Architecture Médaillon sur Databricks Unity Catalog, Scoring de Churn MLflow \texttt{@champion} et Copilote Text-to-SQL Gouverné\par}
+    \vspace{0.8cm}
+
+    \begin{tcolorbox}[colback=lightbg, colframe=bordercol, arc=5pt, boxrule=0.8pt]
+        \centering
+        \textbf{\sffamily\color{navy} Synthèse Exécutive des Résultats de Production}\\[8pt]
+        \resizebox{\textwidth}{!}{%
+        \begin{tabular}{cccc}
+            \textbf{\Large\color{primary} 4 646 999} &
+            \textbf{\Large\color{emerald} 574,3 k\euro} &
+            \textbf{\Large\color{rose} 221,5 k\euro} &
+            \textbf{\Large\color{purple} 28 / 28} \\
+            \footnotesize Tours de jeu analysés &
+            \footnotesize Revenu Net (GGR, 7,08 \%) &
+            \footnotesize GGR à risque scoré (ML) &
+            \footnotesize Portes qualité CI/CD SQL \\
+            \footnotesize (8 000 inscrits, 46 690 sessions) &
+            \footnotesize sur 8,11 M\euro{} de mises &
+            \footnotesize modèle \texttt{@champion} (AUC 0,75) &
+            \footnotesize + 4 boucliers AST Text-to-SQL
+        \end{tabular}%
+        }
+    \end{tcolorbox}
+
+    \vspace{0.5cm}
+    \begin{execbox}{Objectif Exécutif du Projet (\textit{Business Goal})}
+        Un opérateur de casino en ligne génère plusieurs millions de tours de machines à sous par trimestre, mais sa direction générale pilote souvent le budget marketing, la rétention VIP et la conformité anti-fraude sans réconciliation comptable ni visibilité prédictive. Ce rapport détaille la conception et le déploiement en production sur \textbf{Databricks Serverless} d'une plateforme complète qui :
+        \begin{enumerate}
+            \item \textbf{Réconcilie au centime près} 3 flux de télémétrie brute (\texttt{players.csv}, \texttt{sessions.csv}, \texttt{spins.csv}) au sein d'une architecture Médaillon (\texttt{Bronze -> Silver -> Gold}) gouvernée dans Unity Catalog.
+            \item \textbf{Éclaire 4 décisions stratégiques majeures} : réallocation du budget marketing vers les canaux à forte marge (\texttt{Organic} rapporte 2,2 fois plus que \texttt{Referral}), protection des 69 joueurs VIP qui génèrent 40,8 \% du profit total, rétention préventive des joueurs à risque et audit anti-collusion.
+            \item \textbf{Industrialise le Machine Learning avec MLflow} : entraînement sans fuite temporelle, promotion du modèle \texttt{workspace.igaming.igaming\_churn\_model@champion} dans Unity Catalog et chiffrage en euros du GGR menacé de départ (\textbf{221 488,29 \euro}).
+            \item \textbf{Ouvre l'accès aux données en libre-service via un Copilote Text-to-SQL Gouverné} permettant aux directeurs non-techniciens d'interroger les tables Gold en langage naturel en 0,3 seconde, protégé par validation syntaxique AST (\texttt{sqlglot}) et auto-réparation.
+        \end{enumerate}
+    \end{execbox}
+
+    \vfill
+    \small
+    \begin{tabular}{ll}
+        \textbf{Auteur :} & NDINGA OBA Olivier Vertu \\
+        \textbf{Infrastructure Cible :} & Databricks Unity Catalog (\texttt{workspace.igaming\_dev} \& \texttt{workspace.igaming}) \\
+        \textbf{Orchestration CI/CD :} & Databricks Asset Bundles (8 tâches chaînées, 0 dépendance GitHub Actions) \\
+        \textbf{Dépôt Open Source :} & \url{https://github.com/Vertu5/igaming-databricks-lakehouse} \\
+        \textbf{Application Interactive :} & \url{https://ndingaoba-oliviervertu.vercel.app/?view=igaming-databricks-lakehouse}
+    \end{tabular}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ==============================================================================
+% SECTION 1 : CONTEXTE, DONNEES DE DEPART ET FORMULATION DU PROBLEME
+% ==============================================================================
+\section{Contexte Métier, Données de Départ et Pièges Statistiques}
+
+\subsection{Ce que nous avons au départ : inventaire des 3 flux bruts du casino}
+Avant toute modélisation, il est essentiel de documenter précisément la matière première à disposition. Nous recevons une archive opérationnelle couvrant 4 mois d'activité continue (du 1\textsuperscript{er} septembre au 30 décembre 2025, soit 120 jours) d'un casino en ligne opérant dans 10 pays européens (\texttt{DE}, \texttt{GB}, \texttt{SE}, \texttt{FR}, \texttt{NL}, \texttt{ES}, \texttt{CA}, \texttt{PL}, \texttt{IT}, \texttt{FI}) sur un catalogue de 8 machines à sous (\texttt{SLOT\_01} à \texttt{SLOT\_08}).
+
+L'archive brute est composée de trois fichiers CSV relationnels dépourvus d'indicateurs financiers pré-calculés et d'étiquettes de fraude ou d'attrition (\textit{churn}) :
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l r l X}
+\toprule
+\textbf{Fichier Brut} & \textbf{Volume} & \textbf{Clés} & \textbf{Attributs Contenus dans le Fichier} \\
+\midrule
+\texttt{players.csv} & 8 000 lignes & \texttt{player\_id} (PK) & \texttt{registration\_ts}, \texttt{country} (10 pays), \texttt{acquisition\_channel} (5 canaux : \textit{Organic}, \textit{Affiliate}, \textit{Paid Search}, \textit{Social}, \textit{Referral}), \texttt{birth\_year}, \texttt{self\_excluded}. \\
+\addlinespace
+\texttt{sessions.csv} & 46 690 lignes & \texttt{session\_id} (PK), \texttt{player\_id} (FK) & \texttt{start\_ts}, \texttt{end\_ts}, \texttt{device\_type} (\textit{mobile}, \textit{desktop}, \textit{tablet}), \texttt{ip\_hash}, \texttt{device\_fingerprint}, \texttt{session\_country}, \texttt{deposit\_eur}, \texttt{withdrawal\_eur}. \\
+\addlinespace
+\texttt{spins.csv} & 4 646 999 lignes & \texttt{spin\_id} (PK), \texttt{session\_id} (FK) & \texttt{spin\_ts}, \texttt{game\_id} (\texttt{SLOT\_01} à \texttt{SLOT\_08}), \texttt{bet\_amount} (mise en \euro), \texttt{win\_amount} (gain en \euro), \texttt{is\_feature\_buy} (achat direct de bonus à 100$\times$ la mise). \\
+\bottomrule
+\end{tabularx}
+\caption{Inventaire des trois tables brutes constituant le point de départ du projet.}
+\end{table}
+
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    tbl/.style={draw=primary, fill=lightbg, rounded corners=4pt, minimum width=4.4cm, minimum height=2.1cm, align=left, font=\footnotesize\sffamily, inner sep=6pt},
+    rel/.style={-{Latex[length=2.5mm]}, thick, color=slate}
+]
+    \node[tbl] (p) {
+        \textbf{\color{primary} 1. players.csv (8 000)}\\
+        \texttt{PK: player\_id}\\
+        \texttt{country, acquisition\_channel}\\
+        \texttt{registration\_ts, self\_excluded}
+    };
+    \node[tbl, right=2.4cm of p] (s) {
+        \textbf{\color{purple} 2. sessions.csv (46 690)}\\
+        \texttt{PK: session\_id | FK: player\_id}\\
+        \texttt{start\_ts, end\_ts, device\_type}\\
+        \texttt{ip\_hash, deposit\_eur, withdrawal\_eur}
+    };
+    \node[tbl, right=2.4cm of s] (sp) {
+        \textbf{\color{emerald} 3. spins.csv (4 646 999)}\\
+        \texttt{PK: spin\_id | FK: session\_id}\\
+        \texttt{game\_id (SLOT\_01..08)}\\
+        \texttt{bet\_amount, win\_amount, is\_feature\_buy}
+    };
+
+    \draw[rel] (p) -- node[above, font=\scriptsize\ttfamily\color{navy}] {1 : N} node[below, font=\scriptsize\color{muted}] {(1 143 inactifs)} (s);
+    \draw[rel] (s) -- node[above, font=\scriptsize\ttfamily\color{navy}] {1 : N} node[below, font=\scriptsize\color{muted}] {(env. 100 spins)} (sp);
+\end{tikzpicture}%
+}
+\caption{Schéma relationnel des données d'entrée et cardinalités observées.}
+\end{figure}
+
+\subsection{Pourquoi les logs bruts trompent la direction : les 3 pièges statistiques}
+Une exploration rigoureuse des données brutes révèle trois pièges majeurs qui faussent toute analyse superficielle :
+
+\begin{enumerate}
+    \item \textbf{Piège n°1 : Le biais de survie des 1 143 inscrits inactifs (14,29 \%).} Sur les 8 000 comptes créés dans \texttt{players.csv}, seuls 6 857 joueurs ont lancé au moins un tour de machine à sous (\texttt{spins.csv}). Les 1 143 inscrits restants ont un coût d'acquisition marketing mais un revenu nul. Si un analyste effectue une jointure interne (\texttt{INNER JOIN}) entre les joueurs et les tours de jeu, ces 1 143 comptes disparaissent du dénominateur, gonflant artificiellement la rentabilité par inscrit de 16,7 \%. Notre table \texttt{gold\_player\_360} impose donc un \texttt{LEFT JOIN} strict depuis \texttt{bronze\_players} pour conserver les 8 000 inscrits.
+    \item \textbf{Piège n°2 : La variance des machines à sous et les 32,7 \% de joueurs gagnants nets ($\text{GGR} < 0$).} Contrairement à un commerce classique où chaque client génère un chiffre d'affaires positif, le revenu net du casino sur un joueur $p$ est la différence entre ses mises et ses gains :
+    \begin{equation}
+        \text{GGR}_p = \sum_{s \in p} (\text{Bet}_s - \text{Win}_s)
+    \end{equation}
+    Sur une fenêtre de 4 mois, en raison de la volatilité des jackpots, \textbf{2 243 joueurs actifs sur 6 857 (soit 32,7 \%)} sont en gain net contre le casino ($\text{GGR}_p < 0$). Si l'on segmente les joueurs VIP uniquement sur le $\text{GGR}_p$ observé, un gros parieur (\textit{whale}) ayant misé 50 000 \euro{} mais ayant touché un jackpot de 55 000 \euro{} ($\text{GGR}_p = -5\,000$ \euro) serait classé comme « non rentable » et ignoré par les hôtes VIP ! Or, la valeur mathématique attendue d'un joueur dépend de son volume de mise (\textit{Turnover}) pondéré par l'avantage théorique de la maison ($1 - \text{RTP}_{\text{slot}}$) :
+    \begin{equation}
+        \mathbb{E}[\text{GGR}_p] = \sum_{s \in p} \text{Bet}_s \cdot (1 - \text{RTP}_{\text{théorique}}(s))
+    \end{equation}
+    À l'échelle du casino (4,65 millions de spins), la loi des grands nombres opère avec une précision remarquable : le GGR théorique attendu vaut \textbf{575 270,58 \euro} et le GGR réel encaissé vaut \textbf{574 282,53 \euro} (soit un écart relatif de seulement 0,17 \%). C'est pourquoi la segmentation VIP doit reposer sur le \textbf{volume misé (\textit{Turnover})} combiné à la récence et à la fréquence (RFM).
+    \item \textbf{Piège n°3 : L'absence d'étiquettes de fraude et le risque de fuite temporelle (\textit{Data Leakage}) sur le Churn.} Définir le churn sur l'ensemble des 4 mois tout en calculant les variables explicatives (nombre de sessions, mises) sur ces mêmes 4 mois crée une tautologie triviale : un joueur qui a joué au 4\textsuperscript{e} mois a mécaniquement plus de sessions qu'un joueur parti au 2\textsuperscript{e} mois. Pour construire un modèle prédictif honnête et exploitable en production, il est impératif de séparer strictement la fenêtre d'observation des features (60 premiers jours) de la fenêtre de prédiction du départ (30 derniers jours).
+\end{enumerate}
+
+\subsection{Ce que nous voulons faire : les 4 objectifs exécutifs}
+Pour transformer ces trois fichiers bruts en levier de rentabilité et de conformité, nous structurons le projet autour de quatre objectifs opérationnels :
+\begin{itemize}
+    \item \textbf{Objectif 1 (Ingénierie \& Gouvernance) :} Construire un Lakehouse Médaillon (\texttt{Bronze -> Silver -> Gold}) sur Databricks Unity Catalog avec des portes de qualité SQL bloquantes garantissant une réconciliation financière au centime près.
+    \item \textbf{Objectif 2 (Marketing \& VIP) :} Identifier quels canaux d'acquisition financent réellement la marge du casino et isoler le 1 \% de joueurs VIP qui concentre plus de 40 \% des revenus.
+    \item \textbf{Objectif 3 (MLOps \& Rétention Prédictive) :} Entraîner, suivre et enregistrer dans MLflow un modèle \texttt{@champion} prédisant la probabilité de départ à 30 jours afin de chiffrer le \textbf{GGR attendu à risque} de chaque joueur actif.
+    \item \textbf{Objectif 4 (Conformité \& Libre-Service BI) :} Croiser règles statistiques (centile 99 \%) et Isolation Forest pour isoler la fraude multi-comptes, puis exposer les tables Gold via un copilote \textbf{Text-to-SQL gouverné} utilisable sans compétence SQL.
+\end{itemize}
+
+\newpage
+% ==============================================================================
+% SECTION 2 : ARCHITECTURE MEDAILLON ET CASCADE FINANCIERE
+% ==============================================================================
+\section{Architecture Lakehouse Médaillon et Réconciliation Financière}
+
+\subsection{Cascade financière globale du casino (du recrutement au GGR à risque)}
+Une fois les trois fichiers ingérés et réconciliés dans Unity Catalog, le flux financier complet du casino sur la période de 120 jours s'établit comme suit :
+
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    box/.style={draw=bordercol, fill=lightbg, rounded corners=4pt, minimum width=2.9cm, minimum height=2.1cm, align=center, font=\footnotesize\sffamily, inner sep=5pt},
+    arr/.style={-{Latex[length=2.5mm]}, thick, color=primary}
+]
+    \node[box] (b1) {
+        \textcolor{muted}{\textbf{1. INSCRITS}}\\[3pt]
+        {\Large\bfseries\color{navy} 8 000}\\[3pt]
+        \textcolor{emerald}{6 857 actifs (85,7 \%)}\\
+        \textcolor{muted}{1 143 inactifs}
+    };
+    \node[box, right=0.45cm of b1] (b2) {
+        \textcolor{muted}{\textbf{2. MISES (BETS)}}\\[3pt]
+        {\Large\bfseries\color{primary} 8,11 M\euro}\\[3pt]
+        \textcolor{slate}{8 112 315,79 \euro}\\
+        \textcolor{muted}{46 690 sessions}
+    };
+    \node[box, right=0.45cm of b2] (b3) {
+        \textcolor{muted}{\textbf{3. GAINS JOUEURS}}\\[3pt]
+        {\Large\bfseries\color{slate} 7,54 M\euro}\\[3pt]
+        \textcolor{slate}{7 538 033,26 \euro}\\
+        \textcolor{muted}{RTP = 92,92 \%}
+    };
+    \node[box, draw=emerald, right=0.45cm of b3] (b4) {
+        \textcolor{emerald}{\textbf{4. REVENU NET (GGR)}}\\[3pt]
+        {\Large\bfseries\color{emerald} 574,3 k\euro}\\[3pt]
+        \textcolor{emerald}{574 282,53 \euro}\\
+        \textcolor{muted}{Marge (Hold) = 7,08 \%}
+    };
+    \node[box, draw=rose, right=0.45cm of b4] (b5) {
+        \textcolor{rose}{\textbf{5. GGR À RISQUE}}\\[3pt]
+        {\Large\bfseries\color{rose} 221,5 k\euro}\\[3pt]
+        \textcolor{rose}{221 488,29 \euro}\\
+        \textcolor{muted}{Scoré par MLflow}
+    };
+
+    \draw[arr] (b1) -- (b2);
+    \draw[arr] (b2) -- (b3);
+    \draw[arr] (b3) -- (b4);
+    \draw[arr] (b4) -- (b5);
+\end{tikzpicture}%
+}
+\caption{Cascade financière réconciliée sur les 4 646 999 tours de jeu (\texttt{workspace.igaming}).}
+\end{figure}
+
+Les formules comptables exactes appliquées dans la couche Gold sont :
+\begin{align}
+    \text{Turnover} &= \sum_{i=1}^{N_{\text{spins}}} \text{bet\_amount}_i = 8\,112\,315,79\text{ \euro} \\
+    \text{GGR (Gross Gaming Revenue)} &= \sum_{i=1}^{N_{\text{spins}}} (\text{bet\_amount}_i - \text{win\_amount}_i) = 574\,282,53\text{ \euro} \\
+    \text{RTP (Return to Player)} &= \frac{\sum_{i} \text{win\_amount}_i}{\text{Turnover}} = 92,9209\text{ \%}, \quad \text{Hold} = 1 - \text{RTP} = 7,0791\text{ \%}
+\end{align}
+
+\subsection{Architecture Médaillon dans Unity Catalog (\texttt{Bronze -> Silver -> Gold -> ML})}
+Le pipeline est structuré en quatre couches dans le catalogue Unity Catalog \texttt{workspace} :
+
+\begin{enumerate}
+    \item \textbf{Couche Bronze (\texttt{01\_bronze.sql}) :} Ingestion depuis le Volume Unity Catalog (\path{/Volumes/workspace/igaming/raw_landing}) via \texttt{read\_files} avec schéma explicite, horodatage d'ingestion \texttt{\_ingested\_at} et support de l'échantillonnage déterministe en développement (\texttt{xxhash64(player\_id) \% 100 < sample\_pct}). Produit \texttt{bronze\_players}, \texttt{bronze\_sessions} et \texttt{bronze\_spins}.
+    \item \textbf{Couche Silver (\texttt{02\_silver.sql}) :} Nettoyage, déduplication, validation des clés étrangères et enrichissement métier :
+    \begin{itemize}
+        \item \texttt{silver\_players} : normalisation des pays et calcul de l'âge (\texttt{2025 - birth\_year}).
+        \item \texttt{silver\_spins} : jointure avec les sessions et les joueurs, calcul de \texttt{net\_revenue = bet\_amount - win\_amount} et de \texttt{spin\_date}.
+        \item \texttt{silver\_sessions} : agrégation des spins par session pour enrichir chaque session avec sa durée exacte (\texttt{duration\_min}), sa cadence (\texttt{spins\_per\_min}), sa mise maximale (\texttt{max\_bet}), ses achats de bonus (\texttt{feature\_buys}) et son GGR de session.
+    \end{itemize}
+    \item \textbf{Couche Gold (\texttt{03\_gold.sql}) :} Construction des quatre tables décisionnelles :
+    \begin{itemize}
+        \item \texttt{gold\_daily\_kpis} (120 lignes) : suivi quotidien des joueurs actifs (DAU), sessions, mises, gains, GGR, RTP, dépôts (1 217 485 \euro), retraits (657 526 \euro) et flux net de trésorerie (\textit{Net Cashflow} = +559 959 \euro).
+        \item \texttt{gold\_game\_performance} (8 lignes) : performance par machine à sous (\texttt{SLOT\_01} à \texttt{SLOT\_08}), RTP observé, marge maison (\textit{hold\_pct}) et volatilité des gains (\texttt{STDDEV(win\_amount / bet\_amount)}).
+        \item \texttt{gold\_player\_360} (8 000 lignes) : vue panoramique de chaque inscrit avec son canal d'acquisition, son ancienneté, ses jours d'inactivité (\texttt{days\_since\_last\_seen}), sa valeur vie (\texttt{ggr}, \texttt{turnover}), ses scores centiles RFM (\texttt{r\_score}, \texttt{f\_score}, \texttt{m\_score} de 1 à 4) et son segment métier (\texttt{VIP}, \texttt{High-Value Active}, \texttt{At-Risk}, \texttt{Casual}, \texttt{Dormant / No Play}).
+        \item \texttt{gold\_session\_risk} (46 690 lignes) : audit de chaque session combinant 6 signaux de risque (cadence extrême, durée prolongée, mise maximale, incohérence pays, partage d'IP, partage d'appareil) en un \texttt{risk\_score} et un \texttt{risk\_level} (\texttt{High}, \texttt{Medium}, \texttt{Low}, \texttt{Normal}).
+    \end{itemize}
+    \item \textbf{Couche MLOps (\texttt{04\_mlflow\_production.py}) :} Entraîne les modèles dans MLflow, promeut le modèle gagnant sous l'alias \texttt{@champion} dans Unity Catalog et écrit la 5\textsuperscript{e} table Gold \texttt{gold\_player\_ml\_scores} (6 857 joueurs actifs scorés avec leur probabilité de churn, leur persona K-Means et leur \texttt{expected\_ggr\_at\_risk}).
+\end{enumerate}
+
+\newpage
+% ==============================================================================
+% SECTION 3 : INSIGHTS STRATEGIQUES ET DECISIONS BUSINESS
+% ==============================================================================
+\section{Analyses Décisionnelles : Marketing, Pareto VIP et Machines à Sous}
+
+\subsection{Décision 1 : Rentabilité Marketing par Canal d'Acquisition}
+La première question posée par un comité exécutif de casino concerne l'allocation du budget marketing : \textit{quels canaux de recrutement rapportent réellement de la marge nette une fois pris en compte les inscrits qui ne jouent jamais ?}
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r r r r r r r}
+\toprule
+\textbf{Canal Marketing} & \textbf{Inscrits} & \textbf{Actifs} & \textbf{Activation} & \textbf{Mises (\euro)} & \textbf{GGR Net (\euro)} & \textbf{Marge (Hold)} & \textbf{GGR / Inscrit} \\
+\midrule
+\textbf{Organic} & 2 820 & 2 419 & 85,78 \% & 2 915 113,17 & \textbf{255 411,64} & \textbf{8,76 \%} & \textbf{90,57 \euro} \\
+\textbf{Affiliate} & 2 096 & 1 800 & 85,88 \% & 2 223 231,12 & \textbf{148 032,76} & 6,66 \% & \textbf{70,63 \euro} \\
+\textbf{Paid Search} & 1 546 & 1 325 & 85,70 \% & 1 527 299,66 & 95 417,67 & 6,25 \% & 61,72 \euro \\
+\textbf{Social} & 984 & 833 & 84,65 \% & 949 049,21 & 49 346,16 & 5,20 \% & 50,15 \euro \\
+\textbf{Referral} & 554 & 480 & 86,64 \% & 497 622,63 & \textcolor{rose}{\textbf{26 074,30}} & \textcolor{rose}{\textbf{5,24 \%}} & \textcolor{rose}{\textbf{41,72 \euro}} \\
+\midrule
+\textbf{Total / Moyenne} & \textbf{8 000} & \textbf{6 857} & \textbf{85,71 \%} & \textbf{8 112 315,79} & \textbf{574 282,53} & \textbf{7,08 \%} & \textbf{71,79 \euro} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Performance financière complète par canal d'acquisition (\texttt{gold\_player\_360}).}
+\end{table}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=0.88\textwidth,
+    height=6.0cm,
+    bar width=14pt,
+    ylabel={Revenu Net (GGR) en \euro},
+    symbolic x coords={Organic, Affiliate, Paid Search, Social, Referral},
+    xtick=data,
+    ymin=0, ymax=125,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize\bfseries},
+    legend style={at={(0.98,0.95)}, anchor=north east, font=\footnotesize},
+    grid=major,
+    grid style={dashed, bordercol}
+]
+\addplot[fill=primary, draw=navy] coordinates {
+    (Organic, 90.57)
+    (Affiliate, 70.63)
+    (Paid Search, 61.72)
+    (Social, 50.15)
+    (Referral, 41.72)
+};
+\addplot[fill=emerald, draw=navy] coordinates {
+    (Organic, 105.59)
+    (Affiliate, 82.24)
+    (Paid Search, 72.01)
+    (Social, 59.24)
+    (Referral, 54.32)
+};
+\legend{GGR par Inscrit (\euro), GGR par Joueur Actif (\euro)}
+\end{axis}
+\end{tikzpicture}
+\caption{Comparaison du GGR par inscrit et par joueur actif selon le canal d'acquisition.}
+\end{figure}
+
+\begin{execbox}{Insight \& Décision Marketing}
+\begin{itemize}
+    \item \textbf{Constat analytique :} Le taux d'activation initial est quasi identique sur tous les canaux (entre 84,65 \% et 86,64 \%). La différence de rentabilité ne vient donc pas du tunnel d'inscription mais de la \textbf{qualité comportementale des joueurs recrutés}.
+    \item \textbf{Écart de valeur de 2,2$\times$ :} Un joueur issu du canal \texttt{Organic} génère \textbf{90,57 \euro} de GGR net (marge de 8,76 \%), contre seulement \textbf{41,72 \euro} pour \texttt{Referral} (marge de 5,24 \%) et \textbf{50,15 \euro} pour \texttt{Social}. À eux deux, \texttt{Organic} et \texttt{Affiliate} représentent \textbf{70,25 \% du revenu net total du casino} (403,4 k\euro{} sur 574,3 k\euro).
+    \item \textbf{Action recommandée :} Réallouer immédiatement les budgets de parrainage (\texttt{Referral}) et de campagnes sociales génériques vers le référencement organique (\texttt{Organic}) et les partenaires affiliés spécialisés (\texttt{Affiliate}).
+\end{itemize}
+\end{execbox}
+
+\subsection{Décision 2 : Loi de Pareto VIP et Segmentation RFM}
+Dans l'industrie iGaming, la moyenne par joueur est trompeuse car la distribution des mises suit une loi de puissance extrêmement concentrée (loi de Pareto). En découpant les 6 857 joueurs actifs en déciles de volume misé (\textit{Turnover}), nous obtenons la courbe de concentration suivante :
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.88\textwidth,
+    height=6.0cm,
+    xlabel={Déciles de joueurs actifs (classés par volume misé décroissant)},
+    ylabel={Part du volume misé (\%)},
+    symbolic x coords={D1 (Top 10\%), D2 (20\%), D3 (30\%), D4 (40\%), D5 (50\%), D6 (60\%), D7 (70\%), D8 (80\%), D9 (90\%), D10 (100\%)},
+    xtick=data,
+    x tick label style={font=\scriptsize, rotate=20, anchor=east},
+    ymin=0, ymax=105,
+    grid=major,
+    grid style={dashed, bordercol},
+    legend style={at={(0.98,0.65)}, anchor=east, font=\footnotesize}
+]
+\addplot[ybar, bar width=14pt, fill=emerald!75, draw=emerald!90!black] coordinates {
+    (D1 (Top 10\%), 64.2)
+    (D2 (20\%), 16.4)
+    (D3 (30\%), 7.7)
+    (D4 (40\%), 4.4)
+    (D5 (50\%), 2.7)
+    (D6 (60\%), 1.8)
+    (D7 (70\%), 1.2)
+    (D8 (80\%), 0.8)
+    (D9 (90\%), 0.5)
+    (D10 (100\%), 0.3)
+};
+\addplot[thick, mark=*, color=primary, line width=1.5pt] coordinates {
+    (D1 (Top 10\%), 64.2)
+    (D2 (20\%), 80.6)
+    (D3 (30\%), 88.3)
+    (D4 (40\%), 92.7)
+    (D5 (50\%), 95.4)
+    (D6 (60\%), 97.2)
+    (D7 (70\%), 98.4)
+    (D8 (80\%), 99.2)
+    (D9 (90\%), 99.7)
+    (D10 (100\%), 100.0)
+};
+\legend{Part propre du décile (\%), Part cumulée des mises (\%)}
+\end{axis}
+\end{tikzpicture}
+\caption{Courbe de concentration de Pareto sur les 6 857 joueurs actifs.}
+\end{figure}
+
+Le premier décile (\textbf{Top 10 \%}, soit 686 joueurs) génère à lui seul \textbf{64,2 \% de toutes les mises du casino}, et le \textbf{Top 20 \%} en concentre \textbf{80,6 \%}. Pour transformer ce constat en plan d'action CRM, la table \texttt{gold\_player\_360} attribue à chaque joueur trois scores quartiles ($R, F, M \in \{1, 2, 3, 4\}$) basés sur la récence (\texttt{days\_since\_last\_seen}), la fréquence (\texttt{total\_sessions}) et le volume misé (\texttt{turnover}) :
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r r r r r l}
+\toprule
+\textbf{Segment RFM} & \textbf{Joueurs} & \textbf{Part Actifs} & \textbf{Mises (\euro)} & \textbf{GGR Net (\euro)} & \textbf{Part du GGR} & \textbf{Priorité CRM} \\
+\midrule
+\textbf{VIP} & \textbf{69} & 1,01 \% & 2 628 331,84 & \textbf{234 401,56} & \textbf{40,82 \%} & Hôte VIP dédié 24/7 \\
+\textbf{High-Value Active} & 1 923 & 28,04 \% & 4 491 967,05 & 262 677,73 & 45,74 \% & Programme fidélité \& tournois \\
+\textbf{At-Risk (En décrochage)} & \textbf{413} & 6,02 \% & \textbf{553 778,89} & \textbf{46 618,86} & \textbf{8,12 \%} & \textcolor{rose}{\textbf{Relance urgente sous 48h}} \\
+\textbf{Casual} & 4 452 & 64,93 \% & 438 238,01 & 30 584,38 & 5,33 \% & Missions quotidiennes automatisées \\
+\textbf{Dormant / No Play} & 1 143 & (Inactifs) & 0,00 & 0,00 & 0,00 \% & Relance d'activation initiale \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Répartition financière par segment RFM dans \texttt{gold\_player\_360}.}
+\end{table}
+
+\begin{execbox}{Insight \& Décision VIP / CRM}
+\begin{itemize}
+    \item \textbf{Hyper-concentration VIP :} Seulement \textbf{69 joueurs VIP} (1 \% des joueurs actifs) génèrent \textbf{234 401,56 \euro{} de GGR}, soit \textbf{40,82 \% du profit total du casino}. La perte d'un seul de ces comptes coûte en moyenne 3 397 \euro{} de marge nette directe.
+    \item \textbf{Cible d'intervention immédiate :} Le segment \textbf{At-Risk} isole \textbf{413 joueurs à forte valeur historique} ($M \ge 3$, ayant misé 553,8 k\euro) qui n'ont plus ouvert l'application récemment ($R=1$). Ce segment constitue la cible prioritaire des campagnes de réactivation personnalisées.
+\end{itemize}
+\end{execbox}
+
+\subsection{Décision 3 : Performance et Volatilité du Catalogue de Jeux (\texttt{SLOT\_01} à \texttt{SLOT\_08})}
+L'analyse de la table \texttt{gold\_game\_performance} permet de vérifier que chaque machine à sous se comporte conformément aux paramètres certifiés par son éditeur :
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r r r r r r}
+\toprule
+\textbf{Jeu (\texttt{game\_id})} & \textbf{Tours (Spins)} & \textbf{Joueurs} & \textbf{Mises (\euro)} & \textbf{GGR Net (\euro)} & \textbf{RTP Observé} & \textbf{Marge (Hold)} \\
+\midrule
+\texttt{SLOT\_04} & 672 529 & 5 491 & 1 175 056,12 & \textbf{103 875,45} & 91,16 \% & \textbf{8,84 \%} \\
+\texttt{SLOT\_02} & 669 114 & 5 480 & 1 168 390,40 & \textbf{96 625,88} & 91,73 \% & \textbf{8,27 \%} \\
+\texttt{SLOT\_07} & 580 412 & 5 312 & 1 012 845,30 & 82 141,77 & 91,89 \% & 8,11 \% \\
+\texttt{SLOT\_01} & 668 905 & 5 502 & 1 166 912,15 & 78 533,19 & 93,27 \% & 6,73 \% \\
+\texttt{SLOT\_05} & 579 880 & 5 298 & 1 011 490,82 & 68 983,67 & 93,18 \% & 6,82 \% \\
+\texttt{SLOT\_08} & 491 210 & 5 110 & 857 412,50 & 59 418,69 & 93,07 \% & 6,93 \% \\
+\texttt{SLOT\_03} & 492 845 & 5 124 & 860 998,10 & 48 646,39 & 94,35 \% & 5,65 \% \\
+\texttt{SLOT\_06} & 492 104 & 5 095 & 859 210,40 & 36 057,49 & 95,80 \% & 4,20 \% \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Performance télémétrique des 8 machines à sous (\texttt{gold\_game\_performance}).}
+\end{table}
+
+Les titres à haute volatilité (\texttt{SLOT\_04} et \texttt{SLOT\_02}, marge supérieure à 8,2 \%) génèrent 34,9 \% du GGR total du casino, tandis que les machines à RTP élevé (\texttt{SLOT\_06} à 95,80 \% de redistribution) servent de produits d'appel maintenant une durée de session longue pour les joueurs récréatifs.
+
+\newpage
+% ==============================================================================
+% SECTION 4 : DATA SCIENCE, MLFLOW @CHAMPION ET SCORING DE CHURN
+% ==============================================================================
+\section{Data Science \& MLOps : Prédiction du Churn, Personas et Anti-Fraude}
+
+\subsection{Protocole expérimental sans fuite temporelle (\textit{Zero Data Leakage})}
+Pour prédire quels joueurs vont quitter le casino sans tricher avec le futur, le script de production \texttt{src/notebooks/04\_mlflow\_production.py} applique une coupure temporelle stricte à $t_{\text{cutoff}} = t_{\max} - 30\text{ jours}$ :
+\begin{itemize}
+    \item \textbf{Cohorte éligible :} Nous retenons les $N = 5\,524$ joueurs inscrits au moins 20 jours avant $t_{\text{cutoff}}$ et ayant joué au moins une session durant la fenêtre d'observation initiale $[t_0, t_{\text{cutoff}}]$.
+    \item \textbf{Variables explicatives ($\mathbf{x}_p \in \mathbb{R}^8$) calculées exclusivement sur $[t_0, t_{\text{cutoff}}]$ :}
+    \begin{enumerate}
+        \item \texttt{active\_days} : nombre de jours distincts d'activité avant la coupure.
+        \item \texttt{sessions} : nombre total de sessions ouvertes avant la coupure.
+        \item \texttt{spins} : nombre total de tours joués avant la coupure.
+        \item \texttt{turnover} : volume cumulé de mises en euros avant la coupure.
+        \item \texttt{avg\_bet} : mise unitaire moyenne ($\text{turnover} / \text{spins}$).
+        \item \texttt{feature\_buys} : nombre d'achats de bonus à 100$\times$ la mise.
+        \item \texttt{tenure\_days} : ancienneté du compte à la date de coupure.
+        \item \texttt{days\_idle\_before\_cutoff} : nombre de jours écoulés entre la dernière session du joueur et $t_{\text{cutoff}}$.
+    \end{enumerate}
+    \item \textbf{Variable cible ($y_p \in \{0, 1\}$) observée sur $[t_{\text{cutoff}}, t_{\max}]$ (30 derniers jours) :} $y_p = 1$ si le joueur n'a effectué aucune session durant les 30 derniers jours (taux de churn observé = \textbf{34,30 \%}), et $y_p = 0$ sinon.
+\end{itemize}
+
+\subsection{Compétition de modèles dans MLflow et gouvernance \texttt{@champion} Unity Catalog}
+Deux familles de modèles sont entraînées avec validation croisée stratifiée à 5 plis (80 \% entraînement / 20 \% test) et tracées dans l'expérience MLflow \path{/Users/obavertu@gmail.com/igaming_mlflow_igaming} :
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c c c l}
+\toprule
+\textbf{Modèle MLflow} & \textbf{ROC-AUC (Test)} & \textbf{ROC-AUC (CV 5-Fold)} & \textbf{PR-AUC} & \textbf{Score de Brier $\downarrow$} & \textbf{Statut Unity Catalog} \\
+\midrule
+\textbf{Régression Logistique ($\ell_2$)} & \textbf{0,7437} & \textbf{0,7453 $\pm$ 0,0119} & \textbf{0,5441} & \textbf{0,1875} & \textcolor{emerald}{\textbf{Promu \texttt{@champion} (v1)}} \\
+Gradient Boosting (Challenger) & 0,7395 & 0,7455 $\pm$ 0,0108 & 0,5331 & 0,1878 & Candidat Challenger \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Comparaison des performances prédictives et de la calibration probabiliste dans MLflow.}
+\end{table}
+
+\textbf{Pourquoi promouvoir la Régression Logistique comme \texttt{@champion} ?}
+Outre un ROC-AUC de test supérieur ($0,7437$ contre $0,7395$) et un PR-AUC plus élevé ($0,5441$), la Régression Logistique obtient un \textbf{meilleur score de Brier ($0,1875$)}, ce qui garantit que les probabilités prédites $\hat{P}(\text{Churn}_p)$ sont parfaitement calibrées. Or, cette calibration est indispensable car nous multiplions directement la probabilité par le GGR du joueur pour chiffrer l'espérance mathématique de perte en euros :
+\begin{equation}
+    \text{Expected GGR at Risk}(p) = \max(\text{GGR}_p, 0) \cdot \sigma\!\left(\beta_0 + \sum_{j=1}^{8} \beta_j \tilde{x}_{pj}\right)
+\end{equation}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    width=0.84\textwidth,
+    height=6.5cm,
+    bar width=11pt,
+    xlabel={Coefficient standardisé $\beta_j$ (Négatif = Protège contre le Churn | Positif = Accélère le Churn)},
+    symbolic y coords={
+        Anciennete du compte,
+        Nombre de tours,
+        Inactivite recente,
+        Mise moyenne,
+        Achats de bonus,
+        Volume total mise,
+        Nombre de sessions,
+        Jours actifs
+    },
+    ytick=data,
+    xmin=-1.05, xmax=0.25,
+    nodes near coords,
+    nodes near coords style={font=\scriptsize\bfseries, /pgf/number format/fixed, /pgf/number format/precision=2},
+    grid=major,
+    grid style={dashed, bordercol}
+]
+\addplot[fill=emerald!80, draw=navy] coordinates {
+    (-0.88,Jours actifs)
+    (-0.61,Nombre de sessions)
+    (-0.18,Volume total mise)
+    (-0.12,Achats de bonus)
+    (-0.04,Mise moyenne)
+    (0.04,Inactivite recente)
+    (0.06,Nombre de tours)
+    (0.10,Anciennete du compte)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Poids standardisés $\beta_j$ du modèle \texttt{workspace.igaming.igaming\_churn\_model@champion}.}
+\end{figure}
+
+\begin{execbox}{Insight Majeur du Modèle de Churn : L'Habitude Bat le Montant Misé}
+Contrairement à l'intuition répandue, le montant total misé (\texttt{turnover}, $\beta = -0,1816$) et la mise moyenne (\texttt{avg\_bet}, $\beta = -0,0442$) ont un effet protecteur modeste comparé à la \textbf{régularité d'engagement} : le nombre de jours actifs (\texttt{active\_days}, $\beta = -0,8755$) et la fréquence de sessions (\texttt{sessions}, $\beta = -0,6143$) sont de loin les deux facteurs qui ancrent la rétention. \textbf{Recommandation CRM :} remplacer les gros bonus de dépôt ponctuels par des mécaniques d'habitude quotidienne (missions journalières, tours gratuits étalés sur 7 jours).
+\end{execbox}
+
+\subsection{Segmentation comportementale K-Means ($K=4$) et Chiffrage des 221,5 k\euro{} à Risque}
+En complément de la grille RFM, un clustering non supervisé K-Means ($K=4$, variables transformées en $\log(1+x)$ et standardisées, score de Silhouette $= 0,2707$) est exécuté et joint aux scores de churn dans la table de production \texttt{workspace.igaming.gold\_player\_ml\_scores} :
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r r r r r}
+\toprule
+\textbf{Persona Comportemental (K-Means)} & \textbf{Joueurs Actifs} & \textbf{Churn Moyen} & \textbf{Mises Totales (\euro)} & \textbf{GGR Net (\euro)} & \textbf{GGR à Risque (\euro)} \\
+\midrule
+\textbf{Core Regulars} (Joueurs réguliers) & 3 162 & 34,27 \% & 1 826 704,02 & 129 661,48 & \textbf{61 368,28} \\
+\textbf{High-Velocity Grinders} (Intensifs) & 1 781 & 23,03 \% & 3 417 203,31 & 226 113,20 & \textbf{69 813,95} \\
+\textbf{High-Stakes VIP Whales} (Baleines VIP) & 384 & 24,52 \% & 2 769 874,73 & 211 914,68 & \textbf{73 057,26} \\
+\textbf{Low-Engagement Casuals} (Occasionnels) & 1 530 & \textcolor{rose}{\textbf{49,88 \%}} & 98 533,73 & 6 593,17 & 17 248,80 \\
+\midrule
+\textbf{Total Production (\texttt{gold\_player\_ml\_scores})} & \textbf{6 857} & \textbf{34,32 \%} & \textbf{8 112 315,79} & \textbf{574 282,53} & \textbf{221 488,29} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Synthèse de la table \texttt{gold\_player\_ml\_scores} produite par le modèle \texttt{@champion}.}
+\end{table}
+
+Bien que les \textit{Low-Engagement Casuals} aient la probabilité de départ la plus élevée (49,88 \%), ils ne représentent que 17,2 k\euro{} de GGR à risque. À l'inverse, les \textbf{384 High-Stakes VIP Whales} et les \textbf{1 781 High-Velocity Grinders} concentrent à eux seuls \textbf{142 871,21 \euro{} de GGR à risque} (64,5 \% du risque financier total) : c'est sur ces deux segments que le tri par \texttt{expected\_ggr\_at\_risk DESC} maximise le retour sur investissement des équipes VIP.
+
+\subsection{Détection hybride de la fraude et du jeu excessif (Règles Centile 99 \% $\times$ Isolation Forest)}
+Pour auditer les 46 690 sessions sans submerger l'équipe conformité de faux positifs, nous combinons deux moteurs complémentaires :
+\begin{enumerate}
+    \item \textbf{Moteur déterministe (\texttt{gold\_session\_risk}) :} Calibré sur le 99\textsuperscript{e} centile empirique de la distribution (cadence $\ge 20$ spins/min [457 sessions], durée $\ge 49$ min [476 sessions], mise max $\ge 627$ \euro{} [474 sessions]) et enrichi par la détection de graphe d'identifiants partagés entre plusieurs comptes (\texttt{shared\_ip} : 122 sessions ; \texttt{shared\_device} : 107 sessions ; \texttt{geo\_mismatch} : 865 sessions). Ce moteur classe \textbf{399 sessions} en risque \texttt{High} (62) ou \texttt{Medium} (337).
+    \item \textbf{Moteur non supervisé (\texttt{Isolation Forest}) :} Entraîné sur 7 dimensions continues avec un taux de contamination de 1 \%, il isole \textbf{467 sessions atypiques} multidimensionnelles.
+\end{enumerate}
+
+Le croisement des deux moteurs permet une hiérarchisation opérationnelle immédiate :
+\begin{itemize}
+    \item \textbf{Priorité 1 (67 sessions en intersection SQL $\cap$ ML) :} Sessions signalées simultanément par les règles métier et par Isolation Forest -> blocage préventif des retraits et revue manuelle immédiate.
+    \item \textbf{Priorité 2 (332 sessions Règles SQL seules) :} Suspicion de collusion multi-comptes (partage d'adresse IP ou d'empreinte d'appareil) même à faible mise -> vérification KYC.
+    \item \textbf{Priorité 3 (400 sessions Isolation Forest seul) :} Comportements de jeu compulsif émergents -> déclenchement des alertes de Jeu Responsable (\textit{cooling-off period}).
+\end{itemize}
+
+\newpage
+% ==============================================================================
+% SECTION 5 : INDUSTRIALISATION CI/CD ET COPILOTE TEXT-TO-SQL GOUVERNE
+% ==============================================================================
+\section{Industrialisation CI/CD et Copilote Text-to-SQL Gouverné}
+
+\subsection{Pipeline CI/CD sans GitHub Actions via Databricks Asset Bundles}
+Pour garantir une mise en production reproductible même lorsque GitHub Actions est indisponible ou désactivé, l'intégralité du cycle CI/CD est orchestrée via \textbf{Databricks Asset Bundles} (\texttt{databricks.yml} et \texttt{resources/igaming\_pipeline.yml}) et pilotée par notre \texttt{Makefile} :
+
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    stepbox/.style={draw=primary, fill=lightbg, rounded corners=4pt, minimum width=3.1cm, minimum height=1.5cm, align=center, font=\scriptsize\sffamily, inner sep=4pt},
+    gatebox/.style={draw=emerald, fill=emerald!8, rounded corners=4pt, minimum width=2.6cm, minimum height=1.2cm, align=center, font=\scriptsize\sffamily\bfseries, inner sep=4pt},
+    arr/.style={-{Latex[length=2mm]}, thick, color=slate}
+]
+    \node[stepbox] (t1) {\textbf{1. bronze}\\Ingestion CSV (3 tables)};
+    \node[gatebox, right=0.35cm of t1] (g1) {\color{emerald} 2. test\_bronze\\7 assertions SQL};
+    \node[stepbox, right=0.35cm of g1] (t2) {\textbf{3. silver}\\Jointures \& Net Revenue};
+    \node[gatebox, right=0.35cm of t2] (g2) {\color{emerald} 4. test\_silver\\7 assertions SQL};
+
+    \node[stepbox, below=0.8cm of t1] (t3) {\textbf{5. gold}\\4 tables métier};
+    \node[gatebox, right=0.35cm of t3] (g3) {\color{emerald} 6. test\_gold\\8 assertions SQL};
+    \node[stepbox, right=0.35cm of g3] (t4) {\textbf{7. mlflow\_score}\\UC \texttt{@champion} + Gold ML};
+    \node[gatebox, right=0.35cm of t4] (g4) {\color{emerald} 8. test\_ml\\6 assertions SQL};
+
+    \draw[arr] (t1) -- (g1);
+    \draw[arr] (g1) -- (t2);
+    \draw[arr] (t2) -- (g2);
+    \draw[arr] (g2.south) -- ++(0,-0.35) -| (t3.north);
+    \draw[arr] (t3) -- (g3);
+    \draw[arr] (g3) -- (t4);
+    \draw[arr] (t4) -- (g4);
+\end{tikzpicture}%
+}
+\caption{Graphe d'exécution DAG des 8 tâches chaînées du job Databricks (\textbf{28 assertions SQL bloquantes}).}
+\end{figure}
+
+Chaque tâche de test (\texttt{test\_bronze.sql}, \texttt{test\_silver.sql}, \texttt{test\_gold.sql}, \texttt{test\_ml.sql}) utilise la primitive native \texttt{ASSERT\_TRUE(condition, message)} de Databricks SQL : si une seule des \textbf{28 assertions} échoue (par exemple un écart de 1 centime entre Silver et Gold, ou une probabilité de churn hors de $[0, 1]$), le pipeline s'arrête immédiatement (\textit{Fail-Fast}) avant d'exposer des données erronées aux décideurs.
+
+\subsection{Pourquoi un Copilote Text-to-SQL Gouverné plutôt qu'un RAG vectoriel ?}
+Une question architecturale fréquente consiste à demander si l'on aurait pu utiliser du \textbf{RAG (\textit{Retrieval-Augmented Generation})} pour répondre aux questions des directeurs. La réponse est non pour des données transactionnelles tabulaires :
+\begin{itemize}
+    \item \textbf{Limite structurelle du RAG :} Un pipeline RAG découpe des documents en fragments (\textit{chunks}) et recherche les $k$ passages les plus proches par similarité cosinus. Il est mathématiquement incapable de calculer une somme exacte, un centile Pareto ou un taux de marge sur 4,65 millions de lignes sans halluciner les chiffres.
+    \item \textbf{Supériorité du Text-to-SQL Gouverné :} Au lieu de demander au LLM d'inventer le chiffre, le LLM traduit la question métier en une requête SQL exécutée directement par le moteur distribué Databricks sur les tables Gold certifiées. Un RAG ne serait pertinent qu'en brique complémentaire pour interroger des documents juridiques PDF (règlements MGA/ANJ, procédures KYC).
+\end{itemize}
+
+\subsection{Les 4 boucliers de sécurité du moteur Text-to-SQL (\texttt{text2sql.py})}
+Pour permettre à un directeur non-technicien d'interroger la base en langage naturel sans aucun risque pour la production, notre moteur \texttt{text2sql.py} implémente quatre boucliers successifs :
+
+\begin{enumerate}
+    \item \textbf{Bouclier 1 : Dictionnaire sémantique métier injecté dans le prompt système.} Seules les 5 tables Gold (\texttt{gold\_daily\_kpis}, \texttt{gold\_game\_performance}, \texttt{gold\_player\_360}, \texttt{gold\_session\_risk}, \texttt{gold\_player\_ml\_scores}) sont exposées, avec la définition exacte de chaque colonne et des synonymes métier (\textit{revenue} $\rightarrow$ \texttt{ggr}, \textit{bets} $\rightarrow$ \texttt{turnover}). Les tables Bronze et Silver restent invisibles.
+    \item \textbf{Bouclier 2 : Few-Shot Prompting calibré.} Injection de paires (question métier $\rightarrow$ SQL canonique) garantissant l'usage des bonnes formules d'agrégation (comme $\sum \text{ggr} / \sum \text{turnover}$ au lieu d'une moyenne de ratios).
+    \item \textbf{Bouclier 3 : Garde-fou syntaxique AST (\texttt{sqlglot}) et Auto-Réparation (\textit{Self-Healing}).} Avant tout contact avec Databricks, la requête générée est compilée en arbre syntaxique abstrait (AST) dans le dialecte Databricks :
+    \begin{itemize}
+        \item Rejet immédiat (en 0 ms) de toute instruction non-\texttt{SELECT} (\texttt{DROP}, \texttt{DELETE}, \texttt{UPDATE}, \texttt{INSERT}, \texttt{ALTER}, \texttt{GRANT}, \texttt{TRUNCATE}), des requêtes multi-instructions (\texttt{;}) et du \texttt{SELECT *}.
+        \item Liste blanche stricte des tables : toute tentative d'accéder à \texttt{bronze\_players} ou \texttt{system.information\_schema} lève une exception \texttt{SQLGuardrailError}.
+        \item Injection automatique d'un plafond \texttt{LIMIT 1000} pour protéger la mémoire du SQL Warehouse.
+        \item \textbf{Boucle d'auto-réparation :} si le LLM hallucine un nom de colonne (ex. \texttt{SELECT SUM(revenue)}), l'erreur Databricks \texttt{[UNRESOLVED\_COLUMN]} est interceptée et renvoyée au modèle avec la liste des colonnes suggérées, corrigeant automatiquement la requête en \texttt{SELECT SUM(ggr)} dès la seconde tentative.
+    \end{itemize}
+    \item \textbf{Bouclier 4 : Pré-validation sur \texttt{igaming\_dev} (échantillon 5 \%).} Le benchmark automatisé \texttt{eval\_text2sql.py} valide d'abord chaque requête sur le schéma de développement avant de l'exécuter sur la production \texttt{workspace.igaming} (\textbf{100 \% de réussite sur les 8 requêtes analytiques et 100 \% de blocage sur les 6 attaques destructrices}).
+\end{enumerate}
+
+\begin{lstlisting}[style=sqlstyle, caption={Exemple de requête générée et validée par le copilote Text-to-SQL sur la table ML de production.}]
+SELECT
+  cluster_persona,
+  COUNT(*) AS active_players,
+  ROUND(AVG(churn_probability) * 100, 1) AS avg_churn_prob_pct,
+  ROUND(SUM(ggr), 2) AS total_ggr_eur,
+  ROUND(SUM(expected_ggr_at_risk), 2) AS ggr_at_risk_eur
+FROM workspace.igaming.gold_player_ml_scores
+GROUP BY cluster_persona
+ORDER BY ggr_at_risk_eur DESC
+LIMIT 1000;
+\end{lstlisting}
+
+% ==============================================================================
+% CONCLUSION GENERALE
+% ==============================================================================
+\section{Conclusion et Synthèse de l'Architecture Livrée}
+
+\begin{successbox}{Bilan Opérationnel et Industriel}
+En partant de trois fichiers CSV bruts totalisant \textbf{4 646 999 tours de machines à sous}, nous avons conçu, testé et déployé en production sur Databricks Serverless une chaîne de valeur complète qui :
+\begin{enumerate}
+    \item \textbf{Garantit l'exactitude comptable :} 28 assertions SQL automatisées verrouillent chaque étape du pipeline Médaillon (\texttt{Bronze -> Silver -> Gold -> ML}), réconciliant les 8,11 M\euro{} de mises et les 574,3 k\euro{} de GGR au centime près.
+    \item \textbf{Transforme la donnée en décisions chiffrées :} réallocation marketing vers \texttt{Organic} (90,57 \euro/inscrit) et \texttt{Affiliate}, protection ciblée des 69 VIP (40,8 \% du GGR) et relance des 413 gros joueurs en décrochage.
+    \item \textbf{Industrialise le Machine Learning dans Unity Catalog :} le modèle \texttt{igaming\_churn\_model@champion} (ROC-AUC 0,744, Brier 0,1875) démontre que la régularité de jeu fidélise 4,8$\times$ plus que le volume misé et chiffre à \textbf{221 488,29 \euro} le GGR menacé de départ.
+    \item \textbf{Démocratise l'accès gouverné à la donnée :} grâce au copilote Text-to-SQL protégé par analyse AST (\texttt{sqlglot}) et déployé sur l'interface web interactive, tout décideur peut interroger la base de production en langage naturel en toute sécurité.
+\end{enumerate}
+\end{successbox}
+
+\end{document}
